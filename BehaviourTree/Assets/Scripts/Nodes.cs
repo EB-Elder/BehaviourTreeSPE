@@ -19,67 +19,47 @@ public enum baseNodeType
 }
 
 
+//BASENODE
 public class Nodes
 {
-    //This is the actual state of the node
-    
+
     private Func<states> _action;
+    
+    //Spécifique pour la class de base Condition ou Action
     private baseNodeType _nodeType;
     
+    //L'état à l'instant t du Noeud
     public states state = states.NotExecuted;
+    
+    //L'état intial du Noeud
+    public readonly states baseState = states.NotExecuted;
 
-
-    protected Nodes()
-    {
-        
-    }
+    //Constructeur par défaut
+    protected Nodes() { }
+    
+    //Constructeur du Noeud de base
     public Nodes(Func<states> f, baseNodeType newNodeType)
     {
         _action = f;
         _nodeType = newNodeType;
     }
     
+    
+    //Methode virtuel de l'exécution de l'action lié au Noeud
     public virtual states Execute()
     {
         state = _action();
         return state;
     }
-    
-}
 
-public class Selector : Nodes
-{
-    
-    //INCOMPLET
-    private List<Nodes> nodeList = new List<Nodes>();
-
-    public void AddNode(ref Nodes newNode)
+    //Methode virtuel de la réinitialisation lié au Noeud
+    public virtual states Initialize()
     {
-        nodeList.Add(newNode);
-    }
-
-    public void ClearList()
-    {
-        nodeList.Clear();
-    }
-    
-    public override states Execute()
-    {
-        state = states.Failure;
-        foreach (Nodes node in nodeList)
-        {
-            state = node.Execute();
-            if (state == states.Success)
-            {
-                break;
-            }
-        }
+        
+        state = baseState;
         return state;
     }
-
+    
 }
 
-public class Sequence : Nodes
-{
-    private List<Nodes> nodeList;
-}
+

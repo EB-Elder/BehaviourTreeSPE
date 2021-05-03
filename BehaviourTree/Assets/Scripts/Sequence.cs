@@ -14,7 +14,8 @@ public class Sequence : Nodes
         nodeList.Clear();
     }
     
-    public override states Execute(){
+    public override states Execute()
+    {
         
         state = states.Running;
         foreach (Nodes node in nodeList)

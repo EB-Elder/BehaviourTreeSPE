@@ -9,7 +9,16 @@ public class TestingScript : MonoBehaviour
     [SerializeField] private bool _motivated = false;
     [SerializeField] private bool _gotTime = false;
     
-    private List<Nodes> behaviourTree = new List<Nodes>(8);
+    
+    [SerializeField] private float cookingTime = 10.0f;
+    [SerializeField] private float cookingCounter = 0.0f;
+    
+    
+    [SerializeField] private float executeTime = 1.0f;
+    [SerializeField] private float executeCounter = 0.0f;
+
+
+    private readonly Sequence behaviourTree = new Sequence();
     
     private states OrderFood()
     {
@@ -20,7 +29,14 @@ public class TestingScript : MonoBehaviour
     private states CookFood()
     {
         print("I cook food");
-        return states.Success;
+        cookingCounter += 1.0f;
+        if (cookingCounter >= cookingTime)
+        {
+            print("food is cooked");
+            cookingCounter = 0.0f;
+            return states.Success;
+        }
+        return states.Running;
     }
 
     private states isMotivated()
@@ -56,10 +72,26 @@ public class TestingScript : MonoBehaviour
         orderSelector.AddNode(cookingSequence);
         orderSelector.AddNode(orderAction);
         
-        behaviourTree.Add(orderSelector);
+        behaviourTree.AddNode(orderSelector);
 
         
-        states result = behaviourTree[0].Execute();
+    }
+
+    private IEnumerator excuteTree()
+    {
+        yield return new WaitForSeconds(5.5f);
+        
+    }
+
+    private void Update()
+    {
+        executeCounter += Time.deltaTime;
+        if (executeCounter >= executeTime)
+        {
+            states result = behaviourTree.Execute();
+            behaviourTree.Initialize();
+            executeCounter = 0.0f;
+        }
         
     }
 }

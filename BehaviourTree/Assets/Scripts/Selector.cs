@@ -13,18 +13,24 @@ public class Selector : Nodes
     {
         nodeList.Clear();
     }
-    
+
     public override states Execute()
     {
         state = states.Running;
-        foreach (Nodes node in nodeList)
-        {
-            state = node.Execute();
-            if (state == states.Success)
+        /*do
+        {*/
+            foreach (Nodes node in nodeList)
             {
-                break;
+                
+                state = node.Execute();
+                if (state == states.Success || state == states.Running)
+                {
+                    break;
+                }
+                
             }
-        }
+        //} while (state == states.Running);
+        
         return state;
     }
 
@@ -33,7 +39,6 @@ public class Selector : Nodes
         foreach (Nodes node in nodeList)
         {
             node.Initialize();
-            
         }
 
         return base.Initialize();

@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class ForceFailure : Nodes
 {
-    // Start is called before the first frame update
-    void Start()
+    public virtual states Execute()
     {
-        
+        state = states.Running;
+        state = states.Failure;
+        return state;
     }
 
-    // Update is called once per frame
-    void Update()
+    //Methode virtuel de la réinitialisation lié au Noeud
+    public virtual states Initialize()
     {
-        
+        state = states.NotExecuted;
+        return state;
     }
 }

@@ -31,8 +31,6 @@ public class Nodes
     //L'état à l'instant t du Noeud
     public states state = states.NotExecuted;
     
-    //L'état intial du Noeud
-    public readonly states baseState = states.NotExecuted;
 
     //Constructeur par défaut
     protected Nodes() { }
@@ -43,8 +41,7 @@ public class Nodes
         _action = f;
         _nodeType = newNodeType;
     }
-    
-    
+
     //Methode virtuel de l'exécution de l'action lié au Noeud
     public virtual states Execute()
     {
@@ -55,8 +52,8 @@ public class Nodes
     //Methode virtuel de la réinitialisation lié au Noeud
     public virtual states Initialize()
     {
-        
-        state = baseState;
+        Debug.Log("Init !");
+        state = states.NotExecuted;
         return state;
     }
     

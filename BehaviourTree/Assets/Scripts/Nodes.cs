@@ -52,7 +52,6 @@ public class Nodes
     //Methode virtuel de la réinitialisation lié au Noeud
     public virtual states Initialize()
     {
-        Debug.Log("Init !");
         state = states.NotExecuted;
         return state;
     }

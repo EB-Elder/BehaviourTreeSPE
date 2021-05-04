@@ -1834,6 +1834,7 @@ MonoBehaviour:
   bossplayer: {fileID: 1810057720}
   attaqueDistance: {fileID: 1348445046}
   attaqueProx: {fileID: 704398591}
+  joueur: {fileID: 2134621288}
   attaqueDistMat: {fileID: 2100000, guid: f2cc7fa5c19547941a869cf724062194, type: 2}
   attaqueProxMat: {fileID: 2100000, guid: 326a7a74f74ada940ba1fdc1d9da2ad8, type: 2}
   colliderDistance: {fileID: 1367324606}
@@ -1846,6 +1847,8 @@ MonoBehaviour:
   - {fileID: 1081447100}
   - {fileID: 416776212}
   - {fileID: 399190515}
+  isAttacking: 0
+  invul: 0
 --- !u!82 &1810057720
 AudioSource:
   m_ObjectHideFlags: 0

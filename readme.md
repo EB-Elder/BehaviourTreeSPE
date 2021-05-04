@@ -1,10 +1,12 @@
 # BehaviourTreeSPE
 ## This library is designed to be used along with Unity
 
-There is 5 different type of nodes :
-`Nodes` - that are the basic one (Condition/Action)
-`Sequence` - Execute all children node until a FAILURE encountered or the end (AND Gate)
-`Selector` - Execute all children node until a SUCCESS encountered or the end (OR Gate)
+There is 3 different type of nodes :
+```
+Nodes - Is the main  the basic one (Condition/Action)
+Sequence - Execute all children node until a FAILURE encountered or the end (AND Gate)
+Selector - Execute all children node until a SUCCESS encountered or the end (OR Gate)
+```
 
 In the follow example, you need to create your Tree by starting by the most down/left
 

@@ -6,6 +6,8 @@ There is 3 different type of nodes :
 Nodes - Is the main class used as base for every node and also the basic node (Condition/Action)
 Sequence - Execute all children node until a FAILURE encountered or the end (AND Gate)
 Selector - Execute all children node until a SUCCESS encountered or the end (OR Gate)
+ForceFailure - Node for forcing the failure
+ForceSuccess - Node for forcing the success
 ```
 
 In the follow example, you need to create your Tree by starting by the most down/left

@@ -3,7 +3,7 @@
 
 There is 3 different type of nodes :
 ```
-Nodes - Is the main  the basic one (Condition/Action)
+Nodes - Is the main class used as base for every node and also the basic node (Condition/Action)
 Sequence - Execute all children node until a FAILURE encountered or the end (AND Gate)
 Selector - Execute all children node until a SUCCESS encountered or the end (OR Gate)
 ```

@@ -9,15 +9,48 @@ public class combat_boss : MonoBehaviour
     public GameObject attaqueDistance;
     public GameObject attaqueProx;
 
+    [SerializeField]
+    private GameObject joueur;
+
     public Material attaqueDistMat;
     public Material attaqueProxMat;
 
     public BoxCollider colliderDistance;
     public List<SphereCollider> colliderProx;
 
-    bool isAttacking = false;
+    private readonly Sequence behaviourTree = new Sequence();
+
+    public bool isAttacking = true;
     bool isdead = false;
     public bool invul = false;
+
+
+    private void Start()
+    {
+
+        Selector globalBossSelector = new Selector();
+
+
+        Nodes nodeTestCac = new Nodes(testCaC, baseNodeType.Condition);
+        Nodes nodeTestCD = new Nodes(testCD, baseNodeType.Condition);
+        Nodes nodeCloseAttack = new Nodes(AttaqueProx, baseNodeType.Action);
+        Nodes nodeRangedAttack = new Nodes(AttaqueDistance, baseNodeType.Action);
+
+        Sequence closeAttackSequence = new Sequence();
+        closeAttackSequence.AddNode(nodeTestCac);
+        closeAttackSequence.AddNode(nodeTestCD);
+        closeAttackSequence.AddNode(nodeCloseAttack);
+
+
+        Sequence rangedAttackSequence = new Sequence();
+        rangedAttackSequence.AddNode(nodeTestCD);
+        rangedAttackSequence.AddNode(nodeRangedAttack);
+
+        globalBossSelector.AddNode(closeAttackSequence);
+        globalBossSelector.AddNode(rangedAttackSequence);
+
+        behaviourTree.AddNode(globalBossSelector);
+    }
 
     //subir des dégâts
     public void LoosePV(int dmg)
@@ -52,14 +85,20 @@ public class combat_boss : MonoBehaviour
         if (collision.gameObject.tag == "Player") LoosePV(25);
     }
 
-    public void AttaqueDistance()
+    public states AttaqueDistance()
     {
         StartCoroutine(PerformAttaqueDistance());
+
+        return states.Success;
     }
 
-    public void AttaqueProx()
+    public states AttaqueProx()
     {
+        
         StartCoroutine(PerformAttaqueProx());
+
+        return states.Success;
+
     }
 
     private IEnumerator PerformAttaqueDistance()
@@ -84,6 +123,34 @@ public class combat_boss : MonoBehaviour
         isAttacking = false;
     }
 
+    private states testCaC()
+    {
+        float distance = Vector3.Distance(transform.position, joueur.transform.position);
+
+        if (distance < 10)
+        {
+
+            print("le boss est au corps à corps");
+            return states.Success;
+
+        }
+
+        print("le boss est à distance");
+        return states.Failure;
+    }
+
+    private states testCD()
+    {
+        if (!isAttacking)
+        {
+            print("une attaque peut être lancée par le boss");
+            return states.Success;
+        }
+
+        print("le boss est en CD");
+        return states.Failure;
+    }
+
     private IEnumerator PerformAttaqueProx()
     {
         isAttacking = true;
@@ -100,6 +167,7 @@ public class combat_boss : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
+
         for (int i = 0; i < colliderProx.Count; i++)
         {
             colliderProx[i].enabled = false;
@@ -111,18 +179,14 @@ public class combat_boss : MonoBehaviour
         yield return new WaitForSeconds(1.0f);
 
         isAttacking = false;
+
     }
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            if(!isAttacking) AttaqueDistance();
-        }
 
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            if(!isAttacking) AttaqueProx();
-        }
+        //transform.LookAt(joueur.transform.position);
+        states result = behaviourTree.Execute();
+        behaviourTree.Initialize();
     }
 }

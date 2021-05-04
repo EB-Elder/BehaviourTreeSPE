@@ -5,6 +5,7 @@ using UnityEngine;
 public class combat_boss : MonoBehaviour
 {
     public int pv = 200;
+    public float speedrotate = 10.0f;
     public AudioSource bossplayer;
     public GameObject attaqueDistance;
     public GameObject attaqueProx;
@@ -21,6 +22,7 @@ public class combat_boss : MonoBehaviour
     private readonly Sequence behaviourTree = new Sequence();
 
     public bool isAttacking = true;
+    public bool laser = false;
     bool isdead = false;
     public bool invul = false;
 
@@ -104,6 +106,7 @@ public class combat_boss : MonoBehaviour
     private IEnumerator PerformAttaqueDistance()
     {
         isAttacking = true;
+        laser = true;
         attaqueDistance.SetActive(true);
 
         yield return new WaitForSeconds(1.0f);
@@ -113,6 +116,7 @@ public class combat_boss : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
+        laser = false;
         colliderDistance.enabled = false;
         attaqueDistMat.color = new Color(attaqueDistMat.color.r, attaqueDistMat.color.g, attaqueDistMat.color.b, 0.3f);
 
@@ -121,6 +125,7 @@ public class combat_boss : MonoBehaviour
         yield return new WaitForSeconds(2.0f);
 
         isAttacking = false;
+        
     }
 
     private states testCaC()
@@ -184,6 +189,12 @@ public class combat_boss : MonoBehaviour
 
     private void Update()
     {
+        if(!laser)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(joueur.transform.position - transform.position);
+            float str = Mathf.Min(speedrotate * Time.deltaTime, 1);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, str);
+        }
 
         //transform.LookAt(joueur.transform.position);
         states result = behaviourTree.Execute();

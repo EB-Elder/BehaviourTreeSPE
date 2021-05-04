@@ -23,6 +23,7 @@ public class Selector : Nodes
             {
                 
                 state = node.Execute();
+
                 if (state == states.Success || state == states.Running)
                 {
                     break;

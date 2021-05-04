@@ -12,7 +12,13 @@ public class infiltration_ennemi : MonoBehaviour
     public LineRenderer lineDrawer1;
     public LineRenderer lineDrawer2;
 
+
+    [SerializeField] private float executeTime = 1.0f;
+    [SerializeField] private float executeCounter = 0.0f;
+
     private bool canShoot = true;
+
+    private readonly Sequence behaviourTree = new Sequence();
 
     private void Start()
     {
@@ -29,9 +35,28 @@ public class infiltration_ennemi : MonoBehaviour
 
         lineDrawer2.startWidth = 0.3f;
         lineDrawer2.endWidth = 0.3f;
+
+
+        Nodes tirer = new Nodes(Shoot, baseNodeType.Action);
+        Nodes rotate = new Nodes(RotateEnnemi, baseNodeType.Action);
+        Nodes detection = new Nodes(isPlayerInVisionCone, baseNodeType.Condition);
+
+        Sequence channelingFayah = new Sequence();
+        channelingFayah.AddNode(detection);
+        channelingFayah.AddNode(tirer);
+
+
+        Selector ennemieSelector = new Selector();
+
+        ennemieSelector.AddNode(channelingFayah);
+        ennemieSelector.AddNode(rotate);
+
+        behaviourTree.AddNode(ennemieSelector);
+
+
     }
 
-    void Shoot()
+    states Shoot()
     {
         if(canShoot)
         {
@@ -39,25 +64,34 @@ public class infiltration_ennemi : MonoBehaviour
             joueur.LoosePV(degat_arme);
             canShoot = false;
             StartCoroutine(reloading());
+
+            
         }
+        print("failshoot");
+        return states.Success;
     }
 
-    bool isPlayerInVisionCone()
+    states isPlayerInVisionCone()
     {
         float distance = Vector3.Distance(transform.position, joueur.transform.position);
         float angle = Vector3.Angle(transform.forward, joueur.transform.position - transform.position);
 
-        if (distance > maxDistance) return false;
+        if (distance > maxDistance) return states.Failure;
         else
         {
-            if (Mathf.Abs(angle) > Mathf.Abs(maxAngle)) return false;
-            else return true;
+            if (Mathf.Abs(angle) > Mathf.Abs(maxAngle)) return states.Failure;
+            else return states.Success;
         }
+
     }
 
-    private void RotateEnnemi()
+    private states RotateEnnemi()
     {
         transform.Rotate(new Vector3(0.0f, speedRotate * Time.deltaTime, 0.0f));
+
+        Debug.Log("rotating");
+
+        return states.Success;
     }
 
     public IEnumerator reloading()
@@ -80,7 +114,18 @@ public class infiltration_ennemi : MonoBehaviour
 
     private void Update()
     {
-        RotateEnnemi();
+
         DrawConeOfSight();
+
+        states result = behaviourTree.Execute();
+        behaviourTree.Initialize();
+
+        /*executeCounter += Time.deltaTime;
+        if (executeCounter >= executeTime)
+        {
+            
+            executeCounter = 0.0f;
+        }*/
+
     }
 }
